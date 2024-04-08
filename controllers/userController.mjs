@@ -12,8 +12,8 @@ const createUser = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ username });
   if (userExists) return res.status(400).json({ message: "Username already exists" });
 
-  const account = createAccount(data.password),
-    encryptedSeed = account.forBackend.encryptedSeed,
+  const account = createAccount(password),
+    rootSeed = account.forBackend.encryptedSeed,
     salt = account.forBackend.salt,
     address = {
       bitcoin: account.forBackend.bitcoinAdd,
@@ -22,10 +22,10 @@ const createUser = asyncHandler(async (req, res) => {
       avalanche: account.forBackend.avalancheAdd,
       bsc: account.forBackend.bscAdd,
     };
-  const newUser = new User({ username, password, profileImage, encryptedSeed, salt, address });
+  const newUser = new User({ username, password, profileImage, rootSeed, salt, address });
   try {
     await newUser.save();
-    createToken(res, newUser._id);
+    // createToken(res, newUser._id);
 
     return res.status(201).json({
       _id: newUser._id,
