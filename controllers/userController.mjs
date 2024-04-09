@@ -2,6 +2,7 @@ import User from "../models/userModel.mjs";
 import asyncHandler from "../middlewares/asyncHandler.mjs";
 import createToken from "../utils/createToken.mjs";
 import { createAccount, afterLogin, getSeedAndPrivateKey } from "../utils/userAccount.mjs";
+import pinFileToIPFS from "../utils/pinataUploader.mjs";
 import bcrypt from "bcrypt";
 
 const createUser = asyncHandler(async (req, res) => {
@@ -22,7 +23,12 @@ const createUser = asyncHandler(async (req, res) => {
       avalanche: account.forBackend.avalancheAdd,
       bsc: account.forBackend.bscAdd,
     };
-  const newUser = new User({ username, password, profileImage, rootSeed, salt, address });
+
+  const imgRes = await fetch(profileImage);
+  const blob = await imgRes.blob();
+  const imageFile = new File([blob], "image.png", { type: blob.type });
+  const profileImageLink = await pinFileToIPFS(imageFile);
+  const newUser = new User({ username, password, profileImage: profileImageLink, rootSeed, salt, address });
   try {
     await newUser.save();
     // createToken(res, newUser._id);
@@ -117,11 +123,27 @@ const getPrivateKey = asyncHandler(async (req, res) => {
   }
 })
 
+const getAllUsername = asyncHandler(async (req, res) => {
+  const users = await User.find();
+  if (users) {
+    const userNameList = users.map((user) => {
+      return {
+        label: user.username,
+        value: user.username,
+      };
+    });
+    return res.status(200).json(userNameList);
+  } else {
+    return res.status(401).json({ message: "Invalid username" });
+  }
+});
+
 export {
   createUser,
   loginUser,
   logoutCurrentUser,
   checkExistUser,
   getAddressFromUsername,
-  getPrivateKey
+  getPrivateKey,
+  getAllUsername
 };

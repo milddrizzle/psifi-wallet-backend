@@ -5,7 +5,8 @@ import {
   logoutCurrentUser,
   checkExistUser,
   getAddressFromUsername,
-  getPrivateKey
+  getPrivateKey,
+  getAllUsername
 } from "../controllers/userController.mjs";
 import {
   recordMessage,
@@ -24,5 +25,6 @@ router.post("/recordMessage", recordMessage);
 router.post("/getMessage", getMessage);
 router.post("/getContactList", getContactList);
 router.post("/getPrivateKey", getPrivateKey);
+router.get("/getAllUserName", getAllUsername);
 
 export default router;
