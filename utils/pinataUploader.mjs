@@ -1,6 +1,9 @@
-const pinFileToIPFS = async (file) => {
+import fetch from 'node-fetch';
+import FormData from 'form-data';
+
+const pinFileToIPFS = async (imageBuffer, fileName = 'image.png') => {
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("file", imageBuffer, fileName);
 
   const pinataOptions = {
     cidVersion: 0,

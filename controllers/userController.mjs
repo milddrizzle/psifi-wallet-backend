@@ -4,6 +4,7 @@ import createToken from "../utils/createToken.mjs";
 import { createAccount, afterLogin, getSeedAndPrivateKey } from "../utils/userAccount.mjs";
 import pinFileToIPFS from "../utils/pinataUploader.mjs";
 import bcrypt from "bcrypt";
+import fetch from "node-fetch"
 
 const createUser = asyncHandler(async (req, res) => {
   const { username, password, profileImage } = req.body;
@@ -24,8 +25,9 @@ const createUser = asyncHandler(async (req, res) => {
       bsc: account.forBackend.bscAdd,
     };
 
-  const imageFile = new File([profileImage], "image.png", { type: profileImage.type });
-  const profileImageLink = await pinFileToIPFS(imageFile);
+  const imgRes = await fetch(profileImage);
+  const imageBuffer = await imgRes.buffer();
+  const profileImageLink = await pinFileToIPFS(imageBuffer);
   const newUser = new User({ username, password, profileImage: profileImageLink, rootSeed, salt, address });
   try {
     await newUser.save();
