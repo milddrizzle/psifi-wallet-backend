@@ -24,9 +24,7 @@ const createUser = asyncHandler(async (req, res) => {
       bsc: account.forBackend.bscAdd,
     };
 
-  const imgRes = await fetch(profileImage);
-  const blob = await imgRes.blob();
-  const imageFile = new File([blob], "image.png", { type: blob.type });
+  const imageFile = new File([profileImage], "image.png", { type: profileImage.type });
   const profileImageLink = await pinFileToIPFS(imageFile);
   const newUser = new User({ username, password, profileImage: profileImageLink, rootSeed, salt, address });
   try {
