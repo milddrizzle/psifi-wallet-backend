@@ -26,8 +26,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(morgan("dev"));
-app.use(bodyParser.json({ limit: "1mb" }));
-app.use(bodyParser.urlencoded({ limit: "1mb", extended: false }));
+app.use(bodyParser.json({ limit: "5mb" }));
+app.use(bodyParser.urlencoded({ limit: "5mb", extended: false }));
 
 app.use("/api", router);
 
